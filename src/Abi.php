@@ -36,7 +36,6 @@ class Abi extends EthereumStatic
     public function encodeFunction(string $methodName, array $values)
     {
         $m = $this->getParamDefinition($methodName);
-
         if (count($m->inputs) !== count($values)) {
             throw new \InvalidArgumentException('Expected ' . count($m->inputs) . ' params but got ' . count($values));
         }
@@ -46,7 +45,8 @@ class Abi extends EthereumStatic
         foreach ($values as $i => $val) {
             $expectedType = $m->inputs[$i]->type;
             $validAbiType = self::convertByAbi($expectedType, $val);
-            $params .= EthereumStatic::removeHexPrefix($validAbiType->encodedHexVal());
+            $params .= str_pad(EthereumStatic::removeHexPrefix($validAbiType->encodedHexVal()),64,'0',STR_PAD_LEFT);
+
         }
         return new EthD($params);
     }
@@ -261,6 +261,4 @@ class Abi extends EthereumStatic
         }
         return $events;
     }
-
-
 }
